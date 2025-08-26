@@ -8,6 +8,7 @@ struct NoteBookView: View {
     @State var isBookOpen = false
     @State var currentPageIndex = 0
     @State var animatingPageIndex = -1
+    @Binding var isBookOpenBinding: Bool
     
     let totalPages = 10
 
@@ -49,6 +50,11 @@ struct NoteBookView: View {
         .offset(x: move ? -20 : 0, y: move ? 0 : 0)
         .animation(.easeInOut(duration: 1.4), value: move)
         .padding()
+        .onChange(of: isBookOpenBinding) { newValue in
+            if !newValue && isBookOpen {
+                closeBook()
+            }
+        }
         .onTapGesture {
             if !isAnimating {
                 if move {
@@ -168,7 +174,34 @@ struct NoteBookView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
             isAnimating = false
             isBookOpen = true
+            isBookOpenBinding = true
         }
+    }
+    
+    func closeBook() {
+        guard !isAnimating else { return }
+        
+        isAnimating = true
+        isBookOpen = false
+        currentPageIndex = 0
+        
+        withAnimation(.linear(duration: 0.4)) {
+            move = false
+        }
+        
+        withAnimation(.linear(duration: 1).delay(0.4)) {
+            show = false
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
+            isAnimating = false
+            close = false
+            isBookOpenBinding = false
+        }
+    }
+    
+    init(isBookOpenBinding: Binding<Bool> = .constant(false)) {
+        self._isBookOpenBinding = isBookOpenBinding
     }
 }
 
