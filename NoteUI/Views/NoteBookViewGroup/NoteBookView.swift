@@ -182,21 +182,53 @@ struct NoteBookView: View {
         guard !isAnimating else { return }
         
         isAnimating = true
-        isBookOpen = false
-        currentPageIndex = 0
         
-        withAnimation(.linear(duration: 0.4)) {
+        // パラパラとページをめくりながら1ページ目まで戻る
+        flipPagesToFirst()
+        
+        // ページめくりが完了してから本を閉じる
+        let flipDuration = Double(currentPageIndex) * 0.45
+        
+        // ページめくり完了後にisBookOpenをfalseに
+        DispatchQueue.main.asyncAfter(deadline: .now() + flipDuration) {
+            self.isBookOpen = false
+        }
+        
+        // 縮小と表紙閉じを同時に開始してスムーズに
+        withAnimation(.easeInOut(duration: 0.6).delay(flipDuration)) {
             move = false
         }
         
-        withAnimation(.linear(duration: 1).delay(0.4)) {
+        withAnimation(.easeInOut(duration: 0.8).delay(flipDuration)) {
             show = false
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + flipDuration + 0.8) {
             isAnimating = false
             close = false
             isBookOpenBinding = false
+        }
+    }
+    
+    func flipPagesToFirst() {
+        let startPage = currentPageIndex
+        
+        for i in (0..<startPage).reversed() {
+            let delay = Double(startPage - i - 1) * 0.45
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                self.animatingPageIndex = i
+                
+                withAnimation(.easeInOut(duration: 0.42)) {
+                    self.currentPageIndex = i
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.42) {
+                    if i == 0 {
+                        self.animatingPageIndex = -1
+                    }
+                }
+            }
         }
     }
     
@@ -207,5 +239,5 @@ struct NoteBookView: View {
 
 
 #Preview {
-    NoteBookView()
+    ContentView()
 }
