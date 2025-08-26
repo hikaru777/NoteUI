@@ -1,9 +1,16 @@
 import SwiftUI
 
-struct NotePage: View {
+struct NotePage: View, Identifiable {
+    let id = UUID()
     let pageNumber: Int
     let title: String
     let content: String
+    
+    init(pageNumber: Int, title: String, content: String) {
+        self.pageNumber = pageNumber
+        self.title = title
+        self.content = content
+    }
     
     var body: some View {
         ZStack {
