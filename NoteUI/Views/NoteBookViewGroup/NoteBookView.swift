@@ -9,21 +9,18 @@ struct NoteBookView: View {
     @State var currentPageIndex = 0
     @State var animatingPageIndex = -1
     
-    let totalPages = 5
-    let notePages = [
-        NotePage(pageNumber: 1, title: "今日の記録", content: "SwiftUIで美しいアニメーションを作成しました。\n3D回転エフェクトを使って、本のページをめくる動きを再現できました。"),
-        NotePage(pageNumber: 2, title: "明日の予定", content: "・朝のミーティング\n・新機能の実装\n・コードレビュー\n・ドキュメント作成"),
-        NotePage(pageNumber: 3, title: "アイデア", content: "新しいUIのアイデア：\n・ページめくりの改良\n・スムーズなアニメーション\n・ユーザビリティの向上"),
-        NotePage(pageNumber: 4, title: "学習メモ", content: "SwiftUIで学んだこと：\n・@State と @Binding の使い分け\n・アニメーションのタイミング\n・3D回転エフェクト"),
-        NotePage(pageNumber: 5, title: "まとめ", content: "プロジェクトを通して：\n・コーディングスキルが向上\n・デザインセンスを磨けた\n・次回への課題も見つかった")
-    ]
+    let totalPages = 30
 
     var body: some View {
         ZStack {
             ZStack {
                 // All pages stacked
                 ForEach((0..<totalPages).reversed(), id: \.self) { index in
-                    notePages[index]
+                    NotePage(
+                        pageNumber: index + 1,
+                        title: "Page \(index + 1)",
+                        content: "This is page \(index + 1) content.\nSample text for demonstration."
+                    )
                         .rotation3DEffect(
                             .degrees(getPageRotation(for: index)),
                             axis: (x: 0, y: 1, z: 0),
