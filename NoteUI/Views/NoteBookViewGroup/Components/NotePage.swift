@@ -14,10 +14,10 @@ struct NotePage: View, Identifiable {
     
     var body: some View {
         ZStack {
-            Rectangle()
-                .fill(Color.white)
-                .frame(width: 180, height: 263)
-                .clipShape(UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 0, bottomTrailingRadius: 8, topTrailingRadius: 8, style: .continuous))
+//            Rectangle()
+//                .fill(Color.white)
+//                .frame(width: 180, height: 263)
+//                .clipShape(UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 0, bottomTrailingRadius: 8, topTrailingRadius: 8, style: .continuous))
             
             Rectangle()
                 .fill(Color.white)

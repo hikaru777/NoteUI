@@ -9,7 +9,7 @@ struct NoteBookView: View {
     @State var currentPageIndex = 0
     @State var animatingPageIndex = -1
     
-    let totalPages = 30
+    let totalPages = 10
 
     var body: some View {
         ZStack {
@@ -33,7 +33,7 @@ struct NoteBookView: View {
                         .allowsHitTesting(index == currentPageIndex && isBookOpen)
                 }
                 
-                NoteBackCover(show2: .constant(false), close: $close)
+//                NoteBackCover(show2: .constant(false), close: $close)
                 Rectangle().foregroundStyle(.black)
                     .opacity(0.7)
                     .frame(width: 1)
@@ -94,6 +94,7 @@ struct NoteBookView: View {
         guard currentPageIndex > 0, !isAnimating else { return }
         
         isAnimating = true
+        animatingPageIndex = currentPageIndex - 1
         
         withAnimation(.easeInOut(duration: 0.8)) {
             currentPageIndex -= 1
@@ -101,15 +102,22 @@ struct NoteBookView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             isAnimating = false
+            animatingPageIndex = -1
         }
     }
     
     func getPageRotation(for index: Int) -> Double {
         if isAnimating && index == animatingPageIndex {
             // Show the page flipping animation
-            return currentPageIndex > animatingPageIndex ? -180 : 0
+            if currentPageIndex > animatingPageIndex {
+                // Forward animation
+                return -170
+            } else {
+                // Backward animation
+                return 0
+            }
         } else if index < currentPageIndex {
-            return -180 // Already flipped pages
+            return -170 // Already flipped pages
         }
         return 0
     }
@@ -126,7 +134,7 @@ struct NoteBookView: View {
         } else if index < currentPageIndex {
             return Double(index - 10) // Flipped pages behind
         } else {
-            return Double(index) // Future pages in order
+            return Double(totalPages - index) // Future pages in reverse order
         }
     }
 
