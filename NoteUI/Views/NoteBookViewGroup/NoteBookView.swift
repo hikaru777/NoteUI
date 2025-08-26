@@ -42,6 +42,7 @@ struct NoteBookView: View {
             }
             NoteFrontCover(show: $show)
                 .zIndex(isBookOpen ? -10 : 100)
+            
         }
         .scaleEffect(move ? 1.8 : 1.0)
         .offset(x: move ? -20 : 0, y: move ? 0 : 0)
