@@ -14,7 +14,7 @@ struct NoteFrontCover: View {
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 ))
-                .frame(width: 180, height: 264)
+                .frame(width: 182, height: 264)
             
             VStack {
                 Text("My Notebook")

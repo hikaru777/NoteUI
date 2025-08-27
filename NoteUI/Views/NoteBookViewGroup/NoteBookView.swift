@@ -20,7 +20,8 @@ struct NoteBookView: View {
                     NotePage(
                         pageNumber: index + 1,
                         title: "Page \(index + 1)",
-                        content: "This is page \(index + 1) content.\nSample text for demonstration."
+                        content: "This is page \(index + 1) content.\nSample text for demonstration.",
+                        isFlipped: index < currentPageIndex
                     )
                         .rotation3DEffect(
                             .degrees(getPageRotation(for: index)),
@@ -32,9 +33,10 @@ struct NoteBookView: View {
                         .opacity(getPageOpacity(for: index))
                         .zIndex(getPageZIndex(for: index))
                         .allowsHitTesting(index == currentPageIndex && isBookOpen)
+                        .shadow(radius: 0.1)
                 }
                 
-//                NoteBackCover(show2: .constant(false), close: $close)
+                NoteBackCover(show2: .constant(false), close: $close)
                 Rectangle().foregroundStyle(.black)
                     .opacity(0.7)
                     .frame(width: 1)
@@ -117,7 +119,7 @@ struct NoteBookView: View {
             // Show the page flipping animation
             if currentPageIndex > animatingPageIndex {
                 // Forward animation
-                return -170
+                return -140
             } else {
                 // Backward animation
                 return 0
@@ -187,7 +189,10 @@ struct NoteBookView: View {
         flipPagesToFirst()
         
         // ページめくりが完了してから本を閉じる
-        let flipDuration = Double(currentPageIndex) * 0.45
+        // ページ数が多いほど速度を上げる
+        let baseSpeed = 0.45
+        let speedFactor = max(0.15, baseSpeed - (Double(currentPageIndex) * 0.03))
+        let flipDuration = Double(currentPageIndex) * speedFactor
         
         // ページめくり完了後にisBookOpenをfalseに
         DispatchQueue.main.asyncAfter(deadline: .now() + flipDuration) {
@@ -213,17 +218,22 @@ struct NoteBookView: View {
     func flipPagesToFirst() {
         let startPage = currentPageIndex
         
+        // ページ数が多いほど1ページあたりの時間を短くする
+        let baseSpeed = 0.45
+        let speedFactor = max(0.15, baseSpeed - (Double(startPage) * 0.03))
+        let animationSpeed = max(0.15, 0.42 - (Double(startPage) * 0.025))
+        
         for i in (0..<startPage).reversed() {
-            let delay = Double(startPage - i - 1) * 0.45
+            let delay = Double(startPage - i - 1) * speedFactor
             
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 self.animatingPageIndex = i
                 
-                withAnimation(.easeInOut(duration: 0.42)) {
+                withAnimation(.easeInOut(duration: animationSpeed)) {
                     self.currentPageIndex = i
                 }
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.42) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + animationSpeed) {
                     if i == 0 {
                         self.animatingPageIndex = -1
                     }

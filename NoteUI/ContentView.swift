@@ -13,7 +13,7 @@ struct ContentView: View {
         ZStack {
             NoteBookView(isBookOpenBinding: $isBookOpen)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(.black)
+//                .background(.black)
                 .onChange(of: isBookOpen) { newValue in
                     // Handle book open state change if needed
                 }
